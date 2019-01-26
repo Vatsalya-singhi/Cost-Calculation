@@ -8,7 +8,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, TextInput} from 'react-native';
+import {Platform, StyleSheet, Text, View,ScrollView, TouchableOpacity, TextInput} from 'react-native';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -16,6 +16,12 @@ export default class App extends Component<Props> {
     load: 0,
     empty: 0,
     price: 0,
+    totalweight : 0,
+    bagcount : 0,
+    remainder : 0,
+    totalbagcountcost : 0,
+    remainderbagcost : 0,
+    finalcost : 0,
     //onebagweight : 0
  }
   handleLoad = (text) => {
@@ -32,6 +38,7 @@ export default class App extends Component<Props> {
   }*/
 
   calculate = (load,empty,price) => { //,onebagweight
+    console.log("check@@check@@check@@check@@check@@checkcheckcheck")
     if(!load || (load<=0) ){
       alert("Please check Load value");
       return;
@@ -54,15 +61,32 @@ export default class App extends Component<Props> {
     }
 
     let actualweight = load - empty;
+    this.setState({ totalweight : actualweight.toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') });
+
     let bagcount = parseInt(actualweight/62); //onebagweight
+    this.setState({ bagcount : bagcount.toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') });
+
     let remainder = Number(actualweight - (bagcount*62));  //onebagweight
+    this.setState({ remainder : remainder });
+
+
     let cost = (bagcount * price) + (remainder * (price/62));
+    this.setState({ totalbagcountcost : (bagcount*price).toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') });
+    this.setState({ remainderbagcost : (remainder * (price/62)).toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') });
+    this.setState({finalcost : cost.toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') });
+
     alert('Total Price : Rs ' + cost.toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,') );
   }
 
+  resetButton = ()=>{
+    this.setState({ load: 0,price : 0 , empty : 0, totalweight : 0, bagcount : 0, remainder : 0, totalbagcountcost : 0, remainderbagcost : 0, finalcost : 0});
+    console.log(this.state);
+  }
   render() {
     return (
+      <ScrollView scrollEventThrottle={16} >
       <View style={styles.container}>
+      <ScrollView vertical={true} showsVerticalScrollIndicator={true}  >
         <TextInput style = {styles.input}
                keyboardType = "numeric"
                underlineColorAndroid = "transparent"
@@ -95,14 +119,33 @@ export default class App extends Component<Props> {
                autoCapitalize = "none"
                onChangeText = {this.handleOneBagWeight}/> */}
 
-        <TouchableOpacity
-        style = {styles.submitButton}
-        onPress = {
-          () => this.calculate(this.state.load, this.state.empty, this.state.price) //this.state.onebagweight
-        }>
-        <Text style = {styles.submitButtonText}> Calculate </Text>
-        </TouchableOpacity>
+          <View style = {styles.containerInside}>
+            <TouchableOpacity
+                style = {styles.resetButton}
+                onPress = {
+                  () => this.resetButton()
+                }>
+                <Text style = {styles.submitButtonText}> Reset </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style = {styles.submitButton}
+                onPress = {
+                  () => this.calculate(this.state.load, this.state.empty, this.state.price) //this.state.onebagweight
+                }>
+                <Text style = {styles.submitButtonText}> Calculate </Text>
+            </TouchableOpacity>
+          </View>
+        
+        <View style={styles.containertwo}>
+          <Text style={styles.welcome}>Total Weight : {this.state.totalweight} Kgs</Text>
+          <Text style={styles.welcome}>Bags : {this.state.bagcount} => Cost : Rs {this.state.totalbagcountcost}</Text>
+          <Text style={styles.welcome}>Remaining : {this.state.remainder} Kgs => Cost : Rs {this.state.remainderbagcost}</Text>
+          <Text style={styles.welcome}>Total Amount : Rs {this.state.finalcost} </Text>
+        </View>
+        </ScrollView>
       </View>
+      </ScrollView>
     );
   }
 }
@@ -111,7 +154,8 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 23,
-    //flex: 1,
+    flex: 1,
+    flexDirection: 'column',
     //justifyContent: 'center',
     //alignItems: 'center',
     backgroundColor: '#F5FCFF',
@@ -139,8 +183,29 @@ const styles = StyleSheet.create({
   padding: 10,
   margin: 15,
   height: 40,
+  width: '40%',
 },
 submitButtonText:{
   color: 'white'
-}
+},
+
+containerInside: {
+  flex: 1,
+  flexDirection: 'row',
+  //justifyContent: 'space-between'
+},
+containertwo: {
+  flex: 1,
+  flexDirection: 'column',
+  //justifyContent: 'space-between'
+},
+resetButton: {
+  backgroundColor: 'red',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: 10,
+  margin: 15,
+  height: 40,
+  width: '40%',
+},
 });

@@ -139,7 +139,7 @@ export default class App extends Component<Props> {
         
         <View style={styles.containertwo}>
           <Text style={styles.welcome}>Total Weight : {this.state.totalweight} Kgs</Text>
-          <Text style={styles.welcome}>Bags : {this.state.bagcount} => Cost : Rs {this.state.totalbagcountcost}</Text>
+          <Text style={styles.welcome}>Total Bags : {this.state.bagcount} => Cost : Rs {this.state.totalbagcountcost}</Text>
           <Text style={styles.welcome}>Remaining : {this.state.remainder} Kgs => Cost : Rs {this.state.remainderbagcost}</Text>
           <Text style={styles.welcome}>Total Amount : Rs {this.state.finalcost} </Text>
         </View>
@@ -197,6 +197,7 @@ containerInside: {
 containertwo: {
   flex: 1,
   flexDirection: 'column',
+  alignSelf: 'stretch'
   //justifyContent: 'space-between'
 },
 resetButton: {
